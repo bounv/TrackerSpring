@@ -6,6 +6,7 @@ import com.theironyard.services.PhoneRepository;
 import com.theironyard.services.UserRepository;
 import com.theironyard.utilities.PasswordStorage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +18,7 @@ import java.util.List;
 /**
  * Created by boun on 1/4/17.
  */
+@Controller
 public class TrackerSpringController {
     @Autowired
     PhoneRepository phones;
@@ -38,8 +40,6 @@ public class TrackerSpringController {
 
         if (manufacturer != null) {
             phoneList = phones.findByManufacturer(manufacturer);
-        } else if(brand != null) {
-            phoneList = phones.findByBrand(brand);
         } else {
             phoneList = (List<Phone>) phones.findAll();
         }
@@ -58,7 +58,7 @@ public class TrackerSpringController {
         else if(!PasswordStorage.verifyPassword(password, user.password)) {
             throw new Exception("Incorrect Password");
         }
-        session.setAttribute("user", username);
+        session.setAttribute("username", username);
         return "redirect:/";
     }
 
@@ -68,9 +68,68 @@ public class TrackerSpringController {
         return "redirect:/";
     }
 
+    @RequestMapping(path = "/add-phone", method = RequestMethod.POST)
+    public String addPhone(HttpSession session, String manufacturer, String brand) {
+        String username = (String) session.getAttribute("username");
+        User user = users.findFirstByName(username);
+
+        Phone phone = new Phone(manufacturer, brand, user);
+        phones.save(phone);
+        return "redirect:/";
+    }
+
+    @RequestMapping(path = "/update-phone", method = RequestMethod.POST)
+    public String updatePhone(HttpSession session, int id, String manufacturer, String brand) throws Exception {
+
+        if (session.getAttribute("username") == null) {
+            throw new Exception("Not logged in.");
+        }
 
 
+        if (manufacturer == null) {
+            throw new Exception("Didn't get necessary query parameters.");
+        }
 
+        if (brand == null) {
+            throw new Exception("Didn't get necessary query parameters.");
+        }
+
+        String username = (String) session.getAttribute("username");
+
+        Phone phone = (Phone) phones.findOne(id);
+
+        if(phone.user.equals(users.findFirstByName(username))) {
+            phone.manufacturer = manufacturer;
+            phone.brand = brand;
+            phones.save(phone);
+        } else {
+            throw new Exception("EDIT your own phone");
+        }
+
+        return "redirect:/";
+
+    }
+
+    @RequestMapping(path = "delete-phone", method = RequestMethod.POST)
+    public String addPhone(HttpSession session, int id, String manufacturer, String brand) throws Exception {
+
+        if (session.getAttribute("username") == null) {
+            throw new Exception("Not logged in.");
+        }
+
+        String username = (String) session.getAttribute("username");
+
+        Phone phone = (Phone) phones.findOne(id);
+
+        if(phone.user.equals(users.findFirstByName(username))) {
+            phones.delete(phone);
+        } else {
+            throw new Exception("Delete your own phone");
+        }
+
+        return "redirect:/";
+
+    }
 
     @PostConstruct
     public void init() throws PasswordStorage.CannotPerformOperationException {

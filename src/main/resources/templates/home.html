@@ -21,6 +21,52 @@ Welcome, {{name}}!
     <button type="submit">Logout</button>
 </form>
 
+<br/><br/>
+
+<a href="/">All</a>
+<a href="/?manufacturer=apple">Apple</a>
+<a href="/?manufacturer=lg">LG</a>
+<a href="/?manufacturer=samsung">Samsung</a>
+
+<br/><br/>
+
+<form action="/add-phone" method="post">
+    <select name="manufacturer">
+        <option selected disabled>Manufacturer</option>
+        <option value="Apple">Apple</option>
+        <option value="LG">LG</option>
+        <option value="Samsung">Samsung</option>
+    </select>
+    <input type="text" placeholder="Brand" name="brand"/>
+    <button type="submit">Add Phone</button>
+</form>
+
+<br/><br/>
+
+<form action="/update-phone" method="post">
+    <input type="text" placeholder="Enter ID" name="id"/>
+    <select name="manufacturer">
+        <option selected disabled>Manufacturer</option>
+        <option value="Apple">Apple</option>
+        <option value="LG">LG</option>
+        <option value="Samsung">Samsung</option>
+    </select>
+    <input type="text" placeholder="Brand" name="brand"/>
+    <button type="submit">Update Phone</button>
+</form>
+
+
+<ol>
+    {{#phones}}
+    <li>{{manufacturer}} {{brand}}</li>
+    <form action="/delete-phone" method="post">
+        <input type="hidden" value="{{id}}" name="id"/>
+        <button type="submit">Delete</button>
+    </form>
+    <br/>
+    {{/phones}}
+</ol>
+
 
 
 {{/user}}

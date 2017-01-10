@@ -13,13 +13,10 @@ public class Phone {
     Integer id;
 
     @Column(nullable = false)
-    String manufacturer;
+    public String manufacturer;
 
     @Column(nullable = false)
-    String brand;
-
-    @Column(nullable = false)
-    public String name;
+    public String brand;
 
     @ManyToOne
     public User user;
@@ -27,10 +24,9 @@ public class Phone {
     public Phone() {
     }
 
-    public Phone(String manufacturer, String brand, String name, User user) {
+    public Phone(String manufacturer, String brand, User user) {
         this.manufacturer = manufacturer;
         this.brand = brand;
-        this.name = name;
         this.user = user;
     }
 }

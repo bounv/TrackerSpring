@@ -11,9 +11,5 @@ import java.util.List;
  */
 public interface PhoneRepository extends CrudRepository<Phone, Integer> {
     List<Phone> findByManufacturer (String manufacturer);
-    List<Phone> findByBrand(String brand);
-
-    @Query("SELECT p FROM Phone p WHERE p.name LIKE ?1%")
-    List<Phone> findByNameStartsWith(String name);
 
 }
